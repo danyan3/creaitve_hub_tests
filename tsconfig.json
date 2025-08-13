@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "CommonJS",
+    "moduleResolution": "Node",
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "strict": true,
+    "noEmit": true,
+    "types": ["node", "@playwright/test"],
+    "baseUrl": ".",
+    "paths": {
+      "@config/*": ["config/*"],
+      "@fixtures/*": ["fixtures/*"],
+      "@pages/*": ["pages/*"],
+      "@data/*": ["data/*"]
+    }
+  },
+  "include": ["**/*.ts"]
+} 
