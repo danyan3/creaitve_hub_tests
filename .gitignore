@@ -36,3 +36,10 @@ storage-states/*.json
 .idea/
 .vscode/*
 !.vscode/extensions.json
+
+# allure
+allure-report/
+allure-results/
+
+/screenshots/
+/scripts/
