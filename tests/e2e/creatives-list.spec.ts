@@ -1,7 +1,7 @@
-import { test, expect } from './fixtures/fixtures';
-import { CreativesListPage } from '../../pages/creatives-list.page';
-import { Metrics } from '../../data/test-ids';
-import { TestData } from '../../data/test-data';
+import { test, expect } from '@fixtures/fixtures';
+import { CreativesListPage } from '@pages/creatives-list.page';
+import { Metrics } from '@data/test-ids';
+import { TestData } from '@data/test-data';
 
 test.describe('Страница списка креативов', () => {
     let creativesPage: CreativesListPage;
@@ -11,7 +11,7 @@ test.describe('Страница списка креативов', () => {
         await page.goto('/creativities');
     });
 
-    test(`Проверка фильтра «${TestData.campaignChannelTypes.media}»`, async ({ creativePage }) => {
+    test(`Проверка фильтра «${TestData.campaignChannelTypes.media}»`, { tag: ['@smoke'] }, async ({ creativePage }) => {
         await expect(creativesPage.filterChannelTypeMedia()).toBeVisible();
         await creativesPage.filterChannelTypeMedia().click();
 
@@ -25,7 +25,7 @@ test.describe('Страница списка креативов', () => {
         await expect(creativePage.creativeChannelType()).toHaveValue(TestData.campaignChannelTypes.media);
     });
 
-    test(`Проверка фильтра «${TestData.campaignChannelTypes.performance}»`, async ({ creativePage }) => {
+    test(`Проверка фильтра «${TestData.campaignChannelTypes.performance}»`, { tag: ['@smoke'] }, async ({ creativePage }) => {
         await expect(creativesPage.filterChannelTypePerformance()).toBeVisible();
         await creativesPage.filterChannelTypePerformance().click();
 
@@ -39,7 +39,7 @@ test.describe('Страница списка креативов', () => {
         await expect(creativePage.creativeChannelType()).toHaveValue(TestData.campaignChannelTypes.performance);
     });
 
-    test(`Фильтр по продукту «${TestData.apps.lavka}» | «${TestData.campaignChannelTypes.performance}»`, async ({ creativePage }) => {
+    test(`Фильтр по продукту «${TestData.apps.lavka}» | «${TestData.campaignChannelTypes.performance}»`, { tag: ['@regression'] }, async ({ creativePage }) => {
         await expect(creativesPage.filterChannelTypePerformance()).toBeVisible();
         await creativesPage.filterChannelTypePerformance().click();
 
@@ -59,7 +59,7 @@ test.describe('Страница списка креативов', () => {
         await expect(creativePage.creativeChannelType()).toHaveValue(TestData.campaignChannelTypes.performance);
     });
 
-    test(`Фильтр по платформе ${TestData.channelNames.meta} | «${TestData.campaignChannelTypes.media}»`, async ({ creativePage }) => {
+    test(`Фильтр по платформе ${TestData.channelNames.meta} | «${TestData.campaignChannelTypes.media}»`, { tag: ['@regression'] }, async ({ creativePage }) => {
         await expect(creativesPage.filterChannelTypeMedia()).toBeVisible();
         await creativesPage.filterChannelTypeMedia().click();
 
@@ -79,7 +79,7 @@ test.describe('Страница списка креативов', () => {
         await expect(creativePage.creativeChannelType()).toHaveValue(TestData.campaignChannelTypes.media);
     });
 
-    test(`Фильтр по стране ${TestData.regions.kazakhstan} | «${TestData.campaignChannelTypes.media}»`, async ({ creativePage }) => {
+    test(`Фильтр по стране ${TestData.regions.kazakhstan} | «${TestData.campaignChannelTypes.media}»`, { tag: ['@regression'] }, async ({ creativePage }) => {
         await expect(creativesPage.filterChannelTypeMedia()).toBeVisible();
         await creativesPage.filterChannelTypeMedia().click();
 
@@ -124,7 +124,7 @@ test.describe('Страница списка креативов', () => {
     //     await expect(creativePage.creativeType()).toHaveValue(TestData.campaignTypes.media);
     // });
 
-    test(`Применение множественных фильтров продукт «${TestData.apps.go}» | «${TestData.campaignChannelTypes.performance}»`, async ({ creativePage }) => {
+    test(`Применение множественных фильтров продукт «${TestData.apps.go}» | «${TestData.campaignChannelTypes.performance}»`, { tag: ['@regression'] }, async ({ creativePage }) => {
         await expect(creativesPage.filterChannelTypePerformance()).toBeVisible();
         await creativesPage.filterChannelTypePerformance().click();
 
@@ -144,7 +144,7 @@ test.describe('Страница списка креативов', () => {
         await expect(creativePage.creativeChannelType()).toHaveValue(TestData.campaignChannelTypes.performance);
     });
 
-    test(`Применение сложных фильтров продукт «${TestData.apps.eda}» | Язык «${TestData.languages.kazakh}» | «${TestData.campaignChannelTypes.media}»`, async ({ creativePage }) => {
+    test(`Применение сложных фильтров продукт «${TestData.apps.eda}» | Язык «${TestData.languages.kazakh}» | «${TestData.campaignChannelTypes.media}»`, { tag: ['@regression'] }, async ({ creativePage }) => {
         await expect(creativesPage.filterChannelTypeMedia()).toBeVisible();
         await creativesPage.filterChannelTypeMedia().click();
 
@@ -166,7 +166,7 @@ test.describe('Страница списка креативов', () => {
         await expect(creativePage.creativeChannelType()).toHaveValue(TestData.campaignChannelTypes.media);
     });
 
-    test('Выбор одного креатива', async () => {
+    test('Выбор одного креатива', { tag: ['@smoke'] }, async () => {
         await expect(creativesPage.creativesItem()).toBeVisible();
         await creativesPage.creativesItemSelect().first().click();
 
@@ -175,7 +175,7 @@ test.describe('Страница списка креативов', () => {
         await expect(creativesPage.selectedCreativesModal()).toBeVisible();
     });
 
-    test('Создание отчета с дефолтными метриками', async ({ reportPage }) => {
+    test('Создание отчета с дефолтными метриками', { tag: ['@smoke'] }, async ({ reportPage }) => {
         await expect(creativesPage.creativesItem()).toBeVisible();
         await creativesPage.creativesItemSelect().first().click();
 
@@ -190,7 +190,7 @@ test.describe('Страница списка креативов', () => {
         // добавить проверку, что в отчете отображаются только выбранные метрики (в данном случе дефолтные)
     });
 
-    test(`Создание отчета с кастомными метриками для Медиа: ${Metrics.CPC}, ${Metrics.VTR}, ${Metrics.FREQUENCY}, ${Metrics.IMPRESSIONS}`, async ({ reportPage }) => {
+    test(`Создание отчета с кастомными метриками для Медиа: ${Metrics.CPC}, ${Metrics.VTR}, ${Metrics.FREQUENCY}, ${Metrics.IMPRESSIONS}`, { tag: ['@regression'] }, async ({ reportPage }) => {
         await expect(creativesPage.filterChannelTypeMedia()).toBeVisible();
         await creativesPage.filterChannelTypeMedia().click();
 
@@ -216,7 +216,7 @@ test.describe('Страница списка креативов', () => {
         await expect(reportPage.selectMetric(Metrics.REACH)).not.toBeVisible();
     });
 
-    test(`Создание отчета с кастомными метриками для Перфоманс: ${Metrics.ROAS}, ${Metrics.REVENUE}, ${Metrics.LTV}, ${Metrics.IMPRESSIONS}`, async ({ reportPage }) => {
+    test(`Создание отчета с кастомными метриками для Перфоманс: ${Metrics.ROAS}, ${Metrics.REVENUE}, ${Metrics.LTV}, ${Metrics.IMPRESSIONS}`, { tag: ['@regression'] }, async ({ reportPage }) => {
         await expect(creativesPage.filterChannelTypePerformance()).toBeVisible();
         await creativesPage.filterChannelTypePerformance().click();
 
@@ -243,7 +243,7 @@ test.describe('Страница списка креативов', () => {
         await expect(reportPage.selectMetric(Metrics.FREQUENCY)).not.toBeVisible();
     });
 
-    test('Создание отчета из нескольких креативов для Медиа с дефолтными метриками', async ({ reportPage }) => {
+    test('Создание отчета из нескольких креативов для Медиа с дефолтными метриками', { tag: ['@regression'] }, async ({ reportPage }) => {
         await expect(creativesPage.filterChannelTypeMedia()).toBeVisible();
         await creativesPage.filterChannelTypeMedia().click();
 
@@ -283,7 +283,7 @@ test.describe('Страница списка креативов', () => {
         }
     });
 
-    test('Отмена создания отчета', async () => {
+    test('Отмена создания отчета', { tag: ['@regression'] }, async () => {
         await expect(creativesPage.creativesItem()).toBeVisible();
         await creativesPage.creativesItemSelect().first().click();
         await creativesPage.createReportButton().click();
@@ -294,7 +294,7 @@ test.describe('Страница списка креативов', () => {
         await expect(creativesPage.selectedCreativesModal()).not.toBeVisible();
     });
 
-    test('Закрытие модалки создания отчета', async () => {
+    test('Закрытие модалки создания отчета', { tag: ['@regression'] }, async () => {
         await expect(creativesPage.creativesItem()).toBeVisible();
         await creativesPage.creativesItemSelect().first().click();
         await creativesPage.createReportButton().click();

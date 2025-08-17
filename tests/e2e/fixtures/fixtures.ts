@@ -1,7 +1,7 @@
 import { test as base, type Page } from '@playwright/test';
-import { CampaignPage } from '../../../pages/campaign.page';
-import { CreativePage } from '../../../pages/creative.page';
-import { ReportPage } from '../../../pages/report.page';
+import { CampaignPage } from '@pages/campaign.page';
+import { CreativePage } from '@pages/creative.page';
+import { ReportPage } from '@pages/report.page';
 import { CampaignsListPage } from '@pages/campaigns-list.page';
 import { CreativesListPage } from '@pages/creatives-list.page';
 import { ReportsListPage } from '@pages/reports-list.page';

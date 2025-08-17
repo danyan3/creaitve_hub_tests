@@ -1,4 +1,4 @@
-import { test, expect } from './fixtures/fixtures';
+import { test, expect } from '@fixtures/fixtures';
 
 test.describe('Основная навигация', () => {
 
@@ -6,34 +6,34 @@ test.describe('Основная навигация', () => {
         await page.goto('/');
     });
 
-    test('Отображение всех вкладок навигации', async ({ campaignsPage, creativesPage, reportsPage }) => {
+    test('Отображение всех вкладок навигации', { tag: ['@smoke', '@critical'] }, async ({ campaignsPage, creativesPage, reportsPage }) => {
         await expect(campaignsPage.campaignsTab()).toBeVisible();
         await expect(creativesPage.creativesTab()).toBeVisible();
         await expect(reportsPage.reportsTab()).toBeVisible();
     });
 
-    test('Навигация на вкладку кампаний', async ({ campaignsPage }) => {
+    test('Навигация на вкладку кампаний', { tag: ['@smoke'] }, async ({ campaignsPage }) => {
         await expect(campaignsPage.campaignsTab()).toBeVisible();
         await campaignsPage.campaignsTab().click();
 
         await expect(campaignsPage.updateContentButton()).toBeVisible();
     });
 
-    test('Навигация на вкладку креативов', async ({ creativesPage }) => {
+    test('Навигация на вкладку креативов', { tag: ['@smoke'] }, async ({ creativesPage }) => {
         await expect(creativesPage.creativesTab()).toBeVisible();
         await creativesPage.creativesTab().click();
 
         await expect(creativesPage.creativesItem()).toBeVisible();
     });
 
-    test('Навигация на вкладку отчетов', async ({ reportsPage }) => {
+    test('Навигация на вкладку отчетов', { tag: ['@smoke'] }, async ({ reportsPage }) => {
         await expect(reportsPage.reportsTab()).toBeVisible();
         await reportsPage.reportsTab().click();
 
         await expect(reportsPage.reportItem()).toBeVisible();
     });
 
-    test('Сохранение состояния навигации между вкладками', async ({ campaignsPage, creativesPage }) => {
+    test('Сохранение состояния навигации между вкладками', { tag: ['@regression'] }, async ({ campaignsPage, creativesPage }) => {
         await expect(campaignsPage.campaignsTab()).toBeVisible();
         await campaignsPage.campaignsTab().click();
         await expect(campaignsPage.updateContentButton()).toBeVisible();

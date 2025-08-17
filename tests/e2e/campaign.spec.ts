@@ -1,6 +1,6 @@
-import { test, expect } from './fixtures/fixtures';
-import { CampaignPage } from '../../pages/campaign.page';
-import { Metrics } from '../../data/test-ids';
+import { test, expect } from '@fixtures/fixtures';
+import { CampaignPage } from '@pages/campaign.page';
+import { Metrics } from '@data/test-ids';
 import { CampaignsListPage } from '@pages/campaigns-list.page';
 
 test.describe('Страница кампании', () => {
@@ -15,7 +15,7 @@ test.describe('Страница кампании', () => {
         await campaignsPage.campaignsItem().first().click();
     });
 
-    test('Отображение всех атрибутов кампании', async () => {
+    test('Отображение всех атрибутов кампании', { tag: ['@smoke', '@critical'] }, async () => {
         await expect(campaignPage.campaignHeader()).toBeVisible();
         await expect(campaignPage.campaignName()).toBeVisible();
         await expect(campaignPage.campaignDescription()).toBeVisible();
@@ -28,14 +28,14 @@ test.describe('Страница кампании', () => {
         await expect(campaignPage.campaignIsFavorite()).toBeVisible();
     });
 
-    test('Навигация назад к списку кампаний', async ({ campaignsPage }) => {
+    test('Навигация назад к списку кампаний', { tag: ['@smoke'] }, async ({ campaignsPage }) => {
         await expect(campaignPage.campaignBackButton()).toBeVisible();
         await campaignPage.campaignBackButton().click();
 
         await expect(campaignsPage.updateContentButton()).toBeVisible();
     })
 
-    test(`Открытие страницы креатива из списка и проверка соответствия метрик ${Metrics.COST}, ${Metrics.IMPRESSIONS}`, async ({ creativesPage, creativePage }) => {
+    test(`Открытие страницы креатива из списка и проверка соответствия метрик ${Metrics.COST}, ${Metrics.IMPRESSIONS}`, { tag: ['@regression'] }, async ({ creativesPage, creativePage }) => {
         let costValueInList: string | null;
         let impressionsValueInList: string | null;
         let costValueOnPage: string | null;
@@ -78,7 +78,4 @@ test.describe('Страница кампании', () => {
             expect(impressionsValueInList).toBe(impressionsValueOnPage);
         });
     })
-
-
-
 });

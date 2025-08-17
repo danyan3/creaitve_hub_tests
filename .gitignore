@@ -41,5 +41,5 @@ storage-states/*.json
 allure-report/
 allure-results/
 
-/screenshots/
+tests/screenshot/
 /scripts/

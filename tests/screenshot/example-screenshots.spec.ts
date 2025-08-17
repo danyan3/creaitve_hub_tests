@@ -1,4 +1,4 @@
-import { test, expect } from '../e2e/fixtures/fixtures';
+import { test, expect } from '@fixtures/fixtures';
 import { ScreenshotUtils } from './utils/screenshot-utils';
 
 test.describe('Примеры использования ScreenshotUtils', () => {

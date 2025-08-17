@@ -1,7 +1,7 @@
-import { test, expect } from '../e2e/fixtures/fixtures';
-import { ReportsListPage } from '../../pages/reports-list.page';
-import { CampaignsListPage } from '../../pages/campaigns-list.page';
-import { CreativesListPage } from '../../pages/creatives-list.page';
+import { test, expect } from '@fixtures/fixtures';
+import { ReportsListPage } from '@pages/reports-list.page';
+import { CampaignsListPage } from '@pages/campaigns-list.page';
+import { CreativesListPage } from '@pages/creatives-list.page';
 
 test.describe('Скриншоты компонентов', () => {
     let reportsPage: ReportsListPage;

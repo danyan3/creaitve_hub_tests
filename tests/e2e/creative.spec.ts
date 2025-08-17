@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { CreativePage } from '../../pages/creative.page';
+import { CreativePage } from '@pages/creative.page';
 import { CreativesListPage } from '@pages/creatives-list.page';
 
 test.describe('Страница креатива', () => {
@@ -14,7 +14,7 @@ test.describe('Страница креатива', () => {
         await creativesPage.creativesItem().first().click();
     });
 
-    test('Отображение всех атрибутов креатива', async () => {
+    test('Отображение всех атрибутов креатива', { tag: ['@smoke', '@critical'] }, async () => {
         await expect(creativePage.creativeName()).toBeVisible();
         await expect(creativePage.creativeMedia()).toBeVisible();
         await expect(creativePage.creativeApp()).toBeVisible();
@@ -26,6 +26,4 @@ test.describe('Страница креатива', () => {
         await expect(creativePage.creativeDescription()).toBeVisible();
         await expect(creativePage.creativeCampaign()).toBeVisible();
     });
-
-
 });

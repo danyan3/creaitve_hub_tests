@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { ReportPage } from '../../pages/report.page';
+import { ReportPage } from '@pages/report.page';
 import { ReportsListPage } from '@pages/reports-list.page';
 import { Metrics } from '@data/test-ids';
 import * as fs from 'fs';
@@ -16,7 +16,7 @@ test.describe('Страница отчета', () => {
         await reportsPage.reportItem().first().click();
     });
 
-    test('Отображение всех атрибутов отчета', async () => {
+    test('Отображение всех атрибутов отчета', { tag: ['@smoke', '@critical'] }, async () => {
         await expect(reportPage.reportHeader()).toBeVisible();
         await expect(reportPage.reportViewSwitch()).toBeVisible();
         await expect(reportPage.reportViewTable()).toBeVisible();
@@ -26,14 +26,14 @@ test.describe('Страница отчета', () => {
         await expect(reportPage.selectMetric(Metrics.CLICKS)).toBeVisible();
     });
 
-    test('Навигация назад к списку отчетов', async () => {
+    test('Навигация назад к списку отчетов', { tag: ['@smoke'] }, async () => {
         await expect(reportPage.reportBackButton()).toBeVisible();
         await reportPage.reportBackButton().click();
 
         await expect(reportsPage.reportItem()).toBeVisible();
     });
 
-    test('Скачивание отчета', async ({ page }) => {
+    test('Скачивание отчета', { tag: ['@regression'] }, async ({ page }) => {
         await test.step('Проверяем наличие кнопки скачивания', async () => {
             await expect(reportPage.reportDownloadButton()).toBeVisible();
         });

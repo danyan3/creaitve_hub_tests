@@ -1,0 +1,127 @@
+name: E2E Tests
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch:
+    inputs:
+      run_full_tests:
+        description: 'Запустить полные e2e тесты'
+        required: false
+        default: false
+        type: boolean
+
+jobs:
+  # Smoke тесты - быстрые, для каждого коммита/релиза
+  smoke-tests:
+    name: Smoke Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+        
+      - name: Run Smoke Tests
+        run: npm run test:smoke
+        env:
+          BASE_URL: ${{ secrets.BASE_URL }}
+          
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: smoke-test-results
+          path: |
+            test-results/
+            playwright-report/
+            
+  # E2E тесты - полные, только по команде
+  e2e-tests:
+    name: Full E2E Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    # Запускаем только по команде
+    if: github.event.inputs.run_full_tests == 'true'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+        
+      - name: Run Full E2E Tests
+        run: npm run test:e2e
+        env:
+          BASE_URL: ${{ secrets.BASE_URL }}
+          
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: e2e-test-results
+          path: |
+            test-results/
+            playwright-report/
+            
+  # Кросс-браузерное тестирование - только по команде
+  cross-browser-tests:
+    name: Cross-Browser Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    # Запускаем только по команде
+    if: github.event.inputs.run_full_tests == 'true'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+        
+      - name: Run Cross-Browser Tests
+        run: npm run test:all
+        env:
+          BASE_URL: ${{ secrets.BASE_URL }}
+          
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: cross-browser-test-results
+          path: |
+            test-results/
+            playwright-report/

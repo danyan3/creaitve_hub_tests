@@ -28,10 +28,24 @@ export default defineConfig({
         },
     },
     projects: [
+        {
+            name: 'smoke',
+            testMatch: '**/*.spec.ts',
+            grep: /@smoke/,
+            use: { ...devices['Desktop Chrome'] },
+            retries: process.env.CI ? 1 : 0,
+            workers: process.env.CI ? 1 : 1,
+        },
+        {
+            name: 'e2e',
+            testMatch: '**/*.spec.ts',
+            use: { ...devices['Desktop Chrome'] },
+            retries: process.env.CI ? 1 : 0,
+            workers: process.env.CI ? 1 : 2,
+        },
         { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
         { name: 'firefox', use: { ...devices['Desktop Firefox'] } },
         { name: 'webkit', use: { ...devices['Desktop Safari'] } },
     ],
-    // Настройки для скриншотных тестов - используем существующую папку
     snapshotPathTemplate: '{testDir}/{testFileDir}/{testFileName}-snapshots/{arg}{ext}',
 }); 

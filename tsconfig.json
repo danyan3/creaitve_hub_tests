@@ -1,20 +1,51 @@
 {
-  "compilerOptions": {
-    "target": "ESNext",
-    "module": "CommonJS",
-    "moduleResolution": "Node",
-    "esModuleInterop": true,
-    "resolveJsonModule": true,
-    "strict": true,
-    "noEmit": true,
-    "types": ["node", "@playwright/test"],
-    "baseUrl": ".",
-    "paths": {
-      "@config/*": ["config/*"],
-      "@fixtures/*": ["fixtures/*"],
-      "@pages/*": ["pages/*"],
-      "@data/*": ["data/*"]
-    }
-  },
-  "include": ["**/*.ts"]
-} 
+    "compilerOptions": {
+        "target": "ESNext",
+        "module": "CommonJS",
+        "moduleResolution": "Node",
+        "esModuleInterop": true,
+        "resolveJsonModule": true,
+        "strict": true,
+        "noEmit": true,
+        "types": [
+            "node",
+            "@playwright/test"
+        ],
+        "baseUrl": ".",
+        "paths": {
+            "@config/*": [
+                "config/*"
+            ],
+            "@fixtures/*": [
+                "tests/e2e/fixtures/*"
+            ],
+            "@pages/*": [
+                "pages/*"
+            ],
+            "@data/*": [
+                "data/*"
+            ],
+            "@tests/*": [
+                "tests/*"
+            ],
+            "@e2e/*": [
+                "tests/e2e/*"
+            ],
+            "@screenshot/*": [
+                "tests/screenshot/*"
+            ],
+            "@utils/*": [
+                "tests/screenshot/utils/*"
+            ],
+            "@scripts/*": [
+                "scripts/*"
+            ],
+            "@storage/*": [
+                "storage-states/*"
+            ]
+        }
+    },
+    "include": [
+        "**/*.ts"
+    ]
+}
