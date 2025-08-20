@@ -1,15 +1,11 @@
-import { BasePage } from './base.page';
+import { BasePage } from '@pages/base.page';
 import { Locator } from '@playwright/test';
-import { TestIds, Metrics } from '../data/test-ids';
+import { TestIds } from '@data/test-ids';
+import { Metrics } from '@data/metrics';
 
 export class CampaignPage extends BasePage {
-
     campaignBackButton(): Locator {
         return this.page.getByTestId(TestIds.campaignBackButton);
-    }
-
-    campaignHeader(): Locator {
-        return this.page.getByTestId(TestIds.campaignHeader);
     }
 
     campaignName(): Locator {
@@ -52,4 +48,24 @@ export class CampaignPage extends BasePage {
         return this.page.getByTestId(TestIds.getMetricTestId(metric, 'campaign'));
     }
 
+    async expectDateInRange(rangeStart: string, rangeEnd: string): Promise<void> {
+        await this.campaignDate().waitFor({ state: 'visible' });
+
+        const campaignDateText = await this.campaignDate().textContent();
+        if (!campaignDateText) {
+            throw new Error('Дата кампании не найдена');
+        }
+
+        const campaignDateStr = campaignDateText.split(' - ')[0];
+        const campaignDate = new Date(campaignDateStr.split('.').reverse().join('-'));
+
+        const startDate = new Date(rangeStart.split('.').reverse().join('-'));
+        const endDate = new Date(rangeEnd.split('.').reverse().join('-'));
+
+        if (campaignDate.getTime() < startDate.getTime() || campaignDate.getTime() > endDate.getTime()) {
+            throw new Error(
+                `Дата кампании ${campaignDateStr} не входит в диапазон ${rangeStart} - ${rangeEnd}`
+            );
+        }
+    }
 }

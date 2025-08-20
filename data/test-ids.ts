@@ -1,25 +1,4 @@
-export enum Metrics {
-    IMPRESSIONS = 'impressions',
-    REACH = 'reach',
-    CLICKS = 'clicks',
-    FREQUENCY = 'frequency',
-    CTR = 'ctr',
-    CPM = 'cpm',
-    CTV = 'ctv',
-    POST_VIEW_CONVERSIONS = 'post-view-conversions',
-    CR = 'cr',
-    CPL = 'cpl',
-    CPC = 'cpc',
-    VTR = 'vtr',
-    LEADS = 'leads',
-    CPA_CAC = 'cpa',
-    COST = 'cost',
-    ROAS = 'roas',
-    CONVERSIONS = 'conversions',
-    REVENUE = 'revenue',
-    LTV = 'ltv',
-}
-
+import { Metrics } from './metrics';
 
 const metricPrefixes: Record<MetricPrefixes, string> = {
     metric: 'metric',
@@ -39,18 +18,18 @@ function getMetricTestId(metric: Metrics, type: MetricPrefixes): string {
 }
 
 export const TestIds = {
-    // Tabs
+    // Вкладки
     tabCampaigns: 'tab-campaigns',
     tabCreatives: 'tab-creatives',
     tabReports: 'tab-reports',
 
-    // Update content
+    // Обновление контента
     updateContentButton: 'update-content-button',
 
-    // Empty state
+    // Пустое список элементов
     nothingFoundText: 'nothing-found-text',
 
-    // Main filters
+    // Основные фильтры
     filterSearchInput: 'filter-search-input',
     filterOpenButton: 'filter-open-button',
     filterChannelType: 'filter-channel-type',
@@ -59,64 +38,64 @@ export const TestIds = {
     filterApp: 'filter-app',
     filterChannelName: 'filter-channel-name',
     filterRegion: 'filter-region',
-    filterDate: 'filter-date',
-    filterDatePicker: 'filter-date-picker',
-    filterApplyButton: 'filter-apply-button',
+    filterDateFrom: 'filter-date-from',
+    filterDateTo: 'filter-date-to',
     filterResetButton: 'filter-reset-button',
 
-    // Additional Campaigns filters
+    // Дополнительные фильтры кампаний
     filterShowFavorites: 'filter-show-favorites',
 
-    // Additional Creatives filters
-    filterCreativeFormat: 'filter-creative-format',
+    // Дополнительные фильтры креативов
+    filterCreativeFormat: 'filter-creative-format-type',
     filterCreativeLanguage: 'filter-creative-language',
-    filterCreativeCampaign: 'filter-creative-campaign',
+    filterCreativeCampaign: 'filter-creative-campaignsIds',
 
-    // Metrics selector
+    // Селектор метрик для сортировки
     metricsSortSelector: 'metrics-sort-selector',
     getMetricTestId, // Функция для получения test-id метрики в модалке селектора для сортировки (TestIds.getMetricTestId(Metrics.IMPRESSIONS, 'metric'))
     metricsApplyButton: 'metrics-apply-button',
+    metricsCancelButton: 'metrics-cancel-button',
 
-    // Campaign item
+    // Элемент кампании на странице списка кампаний
     campaignItem: 'campaign-item',
-    campaignItemImage: 'campaign-item-image',
+    campaignItemPreviewImg: 'campaign-item-preview-img',
     campaignItemName: 'campaign-item-name',
     campaignItemDescription: 'campaign-item-description',
     campaignItemApp: 'campaign-item-app',
     campaignItemRegion: 'campaign-item-region',
     campaignItemDate: 'campaign-item-date',
-    campaignItemIsFavorite: 'campaign-item-is-favorite',
+    campaignItemFavorite: 'campaign-item-favorite',
     // id каждой метрики из карточки кампании получаем по TestIds.getMetricTestId(Metrics.IMPRESSIONS, 'campaignItem')
 
-    // Creatives item
+    // Элемент креатива на странице списка креативов
     creativesItem: 'creatives-item',
     creativesItemSelect: 'creatives-item-select',
     creativesItemHeader: 'creatives-item-header',
-    creativesItemMedia: 'creatives-item-media', // img or video
+    creativesItemMedia: 'creatives-item-media', // изображение или видео
     // id каждой метрики из карточки креатива получаем по TestIds.getMetricTestId(Metrics.IMPRESSIONS, 'creativesItem')
 
-    // Creatives item for Google platform
+    // Элемент креатива с форматом описания
     creativesItemDescription: 'creatives-item-description',
 
-    // Selected creatives for report
+    // Выбранные креативы для отчета
     selectedCreativesModal: 'selected-creatives-modal',
     createReportButton: 'create-report-button',
 
-    // Metrics for report
+    // Модалка выбора метрик для отчета
     metricsForReportModal: 'metrics-for-report-modal',
     // id каждой метрики из модалки селектора для отчета получаем по TestIds.getMetricTestId(Metrics.IMPRESSIONS, 'report')
     goToReportButton: 'goto-report-button',
     cancelReportMetricsButton: 'cancel-report-metrics-button',
     closeReportMetricsModal: 'close-report-metrics-modal',
 
-    // Reports page: Report items
+    // Элементы отчетов на странице списка отчетов
     reportItem: 'report-item',
     reportItemDeleteButton: 'report-item-delete-button',
     reportItemDownloadButton: 'report-item-download-button',
+    reportItemName: 'report-item-name',
 
-    // Campaign page
+    // Страница кампании
     campaignBackButton: 'campaign-back-button',
-    campaignHeader: 'campaign-header',
     campaignName: 'campaign-name',
     campaignDescription: 'campaign-description',
     campaignPreviewImg: 'campaign-preview-img',
@@ -126,12 +105,12 @@ export const TestIds = {
     campaignDate: 'campaign-date',
     campaignChannelType: 'campaign-channel-type',
     campaignIsFavorite: 'campaign-is-favorite',
-    // id каждой метрики на странице отчёта получаем по TestIds.getMetricTestId(Metrics.IMPRESSIONS, 'campaign')
+    // id каждой метрики на странице кампании получаем по TestIds.getMetricTestId(Metrics.IMPRESSIONS, 'campaign')
 
-    // Creative page
+    // Страница креатива
     creativeBackButton: 'creative-back-button',
     creativeName: 'creative-name',
-    creativeMedia: 'creative-media', // img or video
+    creativeMedia: 'creative-media', // изображение или видео
     creativeChannelType: 'creative-channel-type',
     creativeChannelName: 'creative-channel-name',
     creativeApp: 'creative-app',
@@ -142,14 +121,14 @@ export const TestIds = {
     creativeDescription: 'creative-description',
     creativeMakeReportButton: 'creative-make-report-button',
 
-    // Report page
-    reportHeader: 'report-header',
+    // Страница отчета
     reportBackButton: 'report-back-button',
     reportViewSwitch: 'report-view-switch',
     reportViewTable: 'report-view-table',
     reportViewDashboard: 'report-view-dashboard',
     reportDownloadButton: 'report-download-button',
-    // id каждой метрики для сортировки на странице отчёта получаем по TestIds.getMetricTestId(Metrics.IMPRESSIONS, 'reportSort')
+    reportCreativesItem: 'creativesItem-',
+    // id каждой метрики на странице отчёта получаем по TestIds.getMetricTestId(Metrics.IMPRESSIONS, 'reportSort')
 
 };
 

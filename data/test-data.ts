@@ -1,23 +1,23 @@
 export const TestData = {
     campaignChannelTypes: {
-        media: 'Медиа',
-        performance: 'Перфоманс'
+        media: 'Media',
+        performance: 'Performance'
     },
 
     apps: {
-        lavka: 'Лавка',
-        go: 'Go',
-        eda: 'Еда'
+        kinopoisk: 'Кинопоиск',
+        yandexPay: 'Яндекс Пей',
+        yandexTaxi: 'Яндекс Такси',
+        yandexVideo: 'Яндекс Видео',
+        yandexWeather: 'Яндекс Погода',
     },
 
     channelNames: {
         meta: 'Meta',
         google: 'Google',
-        tiktok: 'TikTok'
     },
 
     regions: {
-        russia: 'Россия',
         kazakhstan: 'Казахстан',
         kyrgyzstan: 'Кыргызстан',
         uzbekistan: 'Узбекистан',

@@ -1,9 +1,9 @@
-import { BasePage } from './base.page';
+import { BasePage } from '@pages/base.page';
 import { Locator } from '@playwright/test';
-import { TestIds, Metrics } from '../data/test-ids';
+import { TestIds } from '@data/test-ids';
+import { Metrics } from '@data/metrics';
 
 export class CreativePage extends BasePage {
-
     creativeName(): Locator {
         return this.page.getByTestId(TestIds.creativeName);
     }
@@ -20,7 +20,6 @@ export class CreativePage extends BasePage {
         return this.page.getByTestId(TestIds.getMetricTestId(metric, 'creative'));
     }
 
-    // Поля для проверки фильтров
     creativeApp(): Locator {
         return this.page.getByTestId(TestIds.creativeApp);
     }
@@ -52,5 +51,4 @@ export class CreativePage extends BasePage {
     creativeCampaign(): Locator {
         return this.page.getByTestId(TestIds.creativeCampaign);
     }
-
 }

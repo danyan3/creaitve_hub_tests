@@ -1,13 +1,9 @@
-import { BasePage } from './base.page';
+import { BasePage } from '@pages/base.page';
 import { Locator } from '@playwright/test';
-import { TestIds, Metrics } from '../data/test-ids';
+import { TestIds } from '@data/test-ids';
+import { Metrics } from '@data/metrics';
 
 export class ReportPage extends BasePage {
-
-    reportHeader(): Locator {
-        return this.page.getByTestId(TestIds.reportHeader);
-    }
-
     reportViewSwitch(): Locator {
         return this.page.getByTestId(TestIds.reportViewSwitch);
     }
@@ -24,12 +20,15 @@ export class ReportPage extends BasePage {
         return this.page.getByTestId(TestIds.reportDownloadButton);
     }
 
-    selectMetric(metric: Metrics): Locator {
-        return this.page.getByTestId(TestIds.getMetricTestId(metric, 'reportSort'));
-    }
-
     reportBackButton(): Locator {
         return this.page.getByTestId(TestIds.reportBackButton);
     }
 
+    selectMetric(metric: Metrics): Locator {
+        return this.page.getByTestId(TestIds.getMetricTestId(metric, 'reportSort'));
+    }
+
+    creativesItemReport(): Locator {
+        return this.page.locator(`[data-testid^="${TestIds.reportCreativesItem}"]`);
+    }
 }

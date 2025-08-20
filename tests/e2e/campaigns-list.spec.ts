@@ -1,231 +1,268 @@
 import { test, expect } from '@fixtures/fixtures';
-import { CampaignsListPage } from '@pages/campaigns-list.page';
-import { Metrics } from '@data/test-ids';
+import { Metrics } from '@data/metrics';
 import { TestData } from '@data/test-data';
+import { Paths } from '@data/paths';
+import { ContentListUtils, SortingUtils } from '@utils/index';
 
 test.describe('Страница списка кампаний', () => {
-    let campaignsPage: CampaignsListPage;
-
-    test.beforeEach(async ({ page }) => {
-        campaignsPage = new CampaignsListPage(page);
-
-        await page.goto('/');
+    test.beforeEach(async ({ page, campaignsPage }) => {
+        await page.goto(Paths.home);
         await campaignsPage.campaignsTab().click();
     });
 
-    // test('Обновление контента по кнопке «Обновить»', async ({ page }) => {
-    //     await expect(campaignsPage.updateContentButton()).toBeVisible();
-    //     await campaignsPage.updateContentButton().click();
-    // });
+    test('Добавление и удаление кампании из избранного',
+        { tag: ['@smoke', '@critical'] },
+        async ({ campaignsPage }) => {
+            await expect(campaignsPage.campaignsItem().first()).toBeVisible();
+            const firstCampaign = campaignsPage.campaignsItem().first();
+            const favoriteButton = firstCampaign.locator(campaignsPage.campaignItemFavorite());
 
-    // После релиза Избранного проверить атрибуты кнопки избранное, чтобы тест работал корректно
-    test('Добавление и удаление кампании из избранного', { tag: ['@smoke', '@critical'] }, async ({ page }) => {
-        await expect(campaignsPage.campaignsItem()).toBeVisible();
-        const firstCampaign = campaignsPage.campaignsItem().first();
-        const favoriteButton = firstCampaign.locator(campaignsPage.campaignItemIsFavorite());
+            const favoriteIcon = favoriteButton.locator('svg');
+            const isFavorite = await favoriteIcon.getAttribute('data-active') === 'true';
 
-        const isFavorite = await favoriteButton.getAttribute('data-selected') === 'true';
-        if (isFavorite) {
+            if (isFavorite) {
+                await favoriteButton.click();
+                await expect(favoriteIcon).toHaveAttribute('data-active', 'false');
+            }
+
+            await campaignsPage.filterShowFavorites().click();
+            await expect(firstCampaign).not.toBeVisible();
+
+            await campaignsPage.filterShowFavorites().click();
+
             await favoriteButton.click();
-            await expect(favoriteButton).toHaveAttribute('data-selected', 'false');
-        }
+            await expect(favoriteIcon).toHaveAttribute('data-active', 'true');
 
-        await campaignsPage.filterShowFavorites().click();
-        await expect(firstCampaign).not.toBeVisible();
+            await campaignsPage.filterShowFavorites().click();
+            await expect(firstCampaign).toBeVisible();
 
-        await campaignsPage.filterShowFavorites().click();
+            await favoriteButton.click();
+            await campaignsPage.page.waitForTimeout(1000);
+            await campaignsPage.filterShowFavorites().dblclick();
+            await expect(firstCampaign).not.toBeVisible();
+        });
 
-        await favoriteButton.click();
-        await expect(favoriteButton).toHaveAttribute('data-selected', 'true');
+    test(`Проверка фильтра «${TestData.campaignChannelTypes.media}»`,
+        { tag: ['@smoke'] },
+        async ({ campaignsPage, campaignPage }) => {
+            await expect(campaignsPage.campaignsItem().first()).toBeVisible();
+            await campaignsPage.filterChannelTypeMedia().click();
 
-        await campaignsPage.filterShowFavorites().click();
-        await expect(firstCampaign).toBeVisible();
+            if (await ContentListUtils.shouldSkipTestIfNoCampaigns(campaignsPage)) {
+                test.skip(true, 'Нет кампаний для проверки');
+            }
 
-        await favoriteButton.click();
-        await expect(firstCampaign).not.toBeVisible();
-    });
+            await campaignsPage.campaignsItem().first().click();
 
-    test(`Проверка фильтра «${TestData.campaignChannelTypes.media}»`, { tag: ['@smoke'] }, async ({ campaignPage }) => {
-        await expect(campaignsPage.filterChannelTypeMedia()).toBeVisible();
-        await campaignsPage.filterChannelTypeMedia().click();
+            await expect(campaignPage.campaignChannelType()).toBeVisible();
+            await expect(campaignPage.campaignChannelType()).toHaveText(TestData.campaignChannelTypes.media);
+        });
 
-        if (await campaignsPage.shouldSkipTestIfNoCampaigns()) {
-            test.skip(true, 'Нет кампаний для проверки');
-        }
+    test(`Проверка фильтра «${TestData.campaignChannelTypes.performance}»`,
+        { tag: ['@smoke'] },
+        async ({ campaignsPage, campaignPage }) => {
+            await expect(campaignsPage.campaignsItem().first()).toBeVisible();
+            await campaignsPage.filterChannelTypePerformance().click();
 
-        await campaignsPage.campaignsItem().first().click();
+            if (await ContentListUtils.shouldSkipTestIfNoCampaigns(campaignsPage)) {
+                test.skip(true, 'Нет кампаний для проверки');
+            }
 
-        await expect(campaignPage.campaignChannelType()).toBeVisible();
-        await expect(campaignPage.campaignChannelType()).toHaveValue(TestData.campaignChannelTypes.media);
-    });
+            await campaignsPage.campaignsItem().first().click();
 
-    test(`Проверка фильтра «${TestData.campaignChannelTypes.performance}»`, { tag: ['@smoke'] }, async ({ campaignPage }) => {
-        await expect(campaignsPage.filterChannelTypePerformance()).toBeVisible();
-        await campaignsPage.filterChannelTypePerformance().click();
+            await expect(campaignPage.campaignChannelType()).toBeVisible();
+            await expect(campaignPage.campaignChannelType()).toHaveText(TestData.campaignChannelTypes.performance);
+        });
 
-        if (await campaignsPage.shouldSkipTestIfNoCampaigns()) {
-            test.skip(true, 'Нет кампаний для проверки');
-        }
+    test(`Фильтр по продукту «${TestData.apps.kinopoisk}» | «${TestData.campaignChannelTypes.media}»`,
+        { tag: ['@smoke', '@regression'] },
+        async ({ campaignsPage, campaignPage }) => {
+            await expect(campaignsPage.campaignsItem().first()).toBeVisible();
+            await campaignsPage.filterChannelTypeMedia().click();
 
-        await campaignsPage.campaignsItem().first().click();
+            await campaignsPage.selectFilters({ app: TestData.apps.kinopoisk });
+            await expect(campaignsPage.filterApp()).toHaveValue(TestData.apps.kinopoisk);
 
-        await expect(campaignPage.campaignChannelType()).toBeVisible();
-        await expect(campaignPage.campaignChannelType()).toHaveValue(TestData.campaignChannelTypes.performance);
-    });
+            if (await ContentListUtils.shouldSkipTestIfNoCampaigns(campaignsPage)) {
+                test.skip(true, 'Нет кампаний для проверки');
+            }
 
-    test(`Фильтр по продукту «${TestData.apps.lavka}» | «${TestData.campaignChannelTypes.media}»`, { tag: ['@regression'] }, async ({ page, campaignPage }) => {
-        await expect(campaignsPage.filterChannelTypeMedia()).toBeVisible();
-        await campaignsPage.filterChannelTypeMedia().click();
+            await campaignsPage.campaignsItem().first().click();
 
-        await expect(campaignsPage.openFiltersButton()).toBeVisible();
-        await campaignsPage.openFiltersIfClosed();
+            await expect(campaignPage.campaignChannelType()).toBeVisible();
+            await expect(campaignPage.campaignChannelType()).toHaveText(TestData.campaignChannelTypes.media);
+            await expect(campaignPage.campaignApp()).toHaveText(TestData.apps.kinopoisk);
+        });
 
-        await campaignsPage.filterApp().selectOption(TestData.apps.lavka);
-        await expect(campaignsPage.filterApp()).toHaveValue(TestData.apps.lavka);
+    test(`Фильтр по платформе ${TestData.channelNames.google} | «${TestData.campaignChannelTypes.media}»`,
+        { tag: ['@regression'] },
+        async ({ campaignsPage, campaignPage }) => {
+            await expect(campaignsPage.campaignsItem().first()).toBeVisible();
+            await campaignsPage.filterChannelTypeMedia().click();
 
-        if (await campaignsPage.shouldSkipTestIfNoCampaigns()) {
-            test.skip(true, 'Нет кампаний для проверки');
-        }
+            await campaignsPage.selectFilters({ channelName: TestData.channelNames.google });
+            await expect(campaignsPage.filterChannelName()).toHaveValue(TestData.channelNames.google);
 
-        await campaignsPage.campaignsItem().first().click();
+            if (await ContentListUtils.shouldSkipTestIfNoCampaigns(campaignsPage)) {
+                test.skip(true, 'Нет кампаний для проверки');
+            }
 
-        await expect(campaignPage.campaignChannelType()).toBeVisible();
-        await expect(campaignPage.campaignChannelType()).toHaveValue(TestData.campaignChannelTypes.media);
-        await expect(campaignPage.campaignApp()).toHaveValue(TestData.apps.lavka);
-    });
+            await campaignsPage.campaignsItem().first().click();
 
-    test(`Фильтр по платформе ${TestData.channelNames.meta} | «${TestData.campaignChannelTypes.media}»`, { tag: ['@regression'] }, async ({ page, campaignPage }) => {
-        await expect(campaignsPage.filterChannelTypeMedia()).toBeVisible();
-        await campaignsPage.filterChannelTypeMedia().click();
+            await expect(campaignPage.campaignChannelType()).toBeVisible();
+            await expect(campaignPage.campaignChannelType()).toHaveText(TestData.campaignChannelTypes.media);
+            await expect(campaignPage.campaignChannelName()).toHaveText(TestData.channelNames.google);
+        });
 
-        await expect(campaignsPage.openFiltersButton()).toBeVisible();
-        await campaignsPage.openFiltersIfClosed();
+    test(`Фильтр по стране ${TestData.regions.kazakhstan} | «${TestData.campaignChannelTypes.performance}»`,
+        { tag: ['@smoke', '@regression'] },
+        async ({ campaignsPage, campaignPage }) => {
+            await expect(campaignsPage.campaignsItem().first()).toBeVisible();
+            await campaignsPage.filterChannelTypePerformance().click();
 
-        await campaignsPage.filterChannelName().selectOption(TestData.channelNames.meta);
-        await expect(campaignsPage.filterChannelName()).toHaveValue(TestData.channelNames.meta);
+            await campaignsPage.selectFilters({ region: TestData.regions.kazakhstan });
+            await expect(campaignsPage.filterRegion()).toHaveValue(TestData.regions.kazakhstan);
 
-        if (await campaignsPage.shouldSkipTestIfNoCampaigns()) {
-            test.skip(true, 'Нет кампаний для проверки');
-        }
+            if (await ContentListUtils.shouldSkipTestIfNoCampaigns(campaignsPage)) {
+                test.skip(true, 'Нет кампаний для проверки');
+            }
 
-        await campaignsPage.campaignsItem().first().click();
+            await campaignsPage.campaignsItem().first().click();
 
-        await expect(campaignPage.campaignChannelType()).toBeVisible();
-        await expect(campaignPage.campaignChannelType()).toHaveValue(TestData.campaignChannelTypes.media);
-        await expect(campaignPage.campaignChannelName()).toHaveValue(TestData.channelNames.meta);
-    });
+            await expect(campaignPage.campaignChannelType()).toBeVisible();
+            await expect(campaignPage.campaignChannelType()).toHaveText(TestData.campaignChannelTypes.performance);
+            await expect(campaignPage.campaignRegion()).toHaveText(TestData.regions.kazakhstan);
+        });
 
-    test(`Фильтр по стране ${TestData.regions.kazakhstan} | «${TestData.campaignChannelTypes.media}»`, { tag: ['@regression'] }, async ({ page, campaignPage }) => {
-        await expect(campaignsPage.filterChannelTypeMedia()).toBeVisible();
-        await campaignsPage.filterChannelTypeMedia().click();
+    test(`Фильтр по продукту «${TestData.apps.yandexVideo}» | «${TestData.campaignChannelTypes.performance}»`,
+        { tag: ['@smoke', '@regression'] },
+        async ({ campaignsPage, campaignPage }) => {
+            await expect(campaignsPage.campaignsItem().first()).toBeVisible();
+            await campaignsPage.filterChannelTypePerformance().click();
 
-        await expect(campaignsPage.openFiltersButton()).toBeVisible();
-        await campaignsPage.openFiltersIfClosed();
+            await campaignsPage.selectFilters({ app: TestData.apps.yandexVideo });
+            await expect(campaignsPage.filterApp()).toHaveValue(TestData.apps.yandexVideo);
 
-        await campaignsPage.filterRegion().selectOption(TestData.regions.kazakhstan);
-        await expect(campaignsPage.filterRegion()).toHaveValue(TestData.regions.kazakhstan);
+            if (await ContentListUtils.shouldSkipTestIfNoCampaigns(campaignsPage)) {
+                test.skip(true, 'Нет кампаний для проверки');
+            }
 
-        if (await campaignsPage.shouldSkipTestIfNoCampaigns()) {
-            test.skip(true, 'Нет кампаний для проверки');
-        }
+            await campaignsPage.campaignsItem().first().click();
 
-        await campaignsPage.campaignsItem().first().click();
+            await expect(campaignPage.campaignApp()).toBeVisible();
+            await expect(campaignPage.campaignApp()).toHaveText(TestData.apps.yandexVideo);
+            await expect(campaignPage.campaignChannelType()).toHaveText(TestData.campaignChannelTypes.performance);
+        });
 
-        await expect(campaignPage.campaignChannelType()).toBeVisible();
-        await expect(campaignPage.campaignChannelType()).toHaveValue(TestData.campaignChannelTypes.media);
-        await expect(campaignPage.campaignRegion()).toHaveValue(TestData.regions.kazakhstan);
-    });
-    // Нужно будет придумать, как проверять дату и сверять ей с той, что в карточке. Также добавить разных тестов на дату
-    // test('Фильтр по сегодняшней дате | «Медиа»', async ({ page, campaignPage }) => {
-    //     await expect(campaignsPage.filterTypeMedia()).toBeVisible();
-    //     await campaignsPage.filterTypeMedia().click();
+    test(`Применение сложных фильтров продукт «${TestData.apps.yandexWeather}» | площадка «${TestData.channelNames.google}» | «${TestData.campaignChannelTypes.performance}»`,
+        { tag: ['@regression'] },
+        async ({ campaignsPage, campaignPage }) => {
+            await expect(campaignsPage.campaignsItem()).toBeVisible();
+            await campaignsPage.filterChannelTypePerformance().click();
 
-    //     await expect(campaignsPage.openFiltersButton()).toBeVisible();
-    //     await campaignsPage.openFiltersIfClosed();
+            await campaignsPage.selectFilters({ app: TestData.apps.yandexWeather, channelName: TestData.channelNames.google });
 
-    //     // Открываем календарь
-    //     await campaignsPage.dateFilter().click();
+            if (await ContentListUtils.shouldSkipTestIfNoCampaigns(campaignsPage)) {
+                test.skip(true, 'Нет кампаний для проверки');
+            }
 
-    //     // Выбираем сегодняшнюю дату по атрибуту data-today="true" внутри datePicker
-    //     await campaignsPage.dateFilter().locator('button[data-today="true"]').click();
+            await campaignsPage.campaignsItem().first().click();
 
-    //     await campaignsPage.applyButton().click();
+            await expect(campaignPage.campaignApp()).toBeVisible();
+            await expect(campaignPage.campaignApp()).toHaveText(TestData.apps.yandexWeather);
+            await expect(campaignPage.campaignChannelName()).toHaveText(TestData.channelNames.google);
+            await expect(campaignPage.campaignChannelType()).toHaveText(TestData.campaignChannelTypes.performance);
+        });
 
-    //     const campaignsCount = await campaignsPage.campaignsItem().count();
-    //     if (campaignsCount === 0 && await campaignsPage.nothingFoundText().isVisible()) {
-    //         test.skip(true, 'Нет кампаний для проверки');
-    //     }
+    test(`Применение сложных фильтров продукт «${TestData.apps.yandexTaxi}» | площадка «${TestData.channelNames.meta}» | «${TestData.campaignChannelTypes.performance}»`,
+        { tag: ['@regression'] },
+        async ({ campaignsPage, campaignPage }) => {
+            await expect(campaignsPage.campaignsItem().first()).toBeVisible();
+            await campaignsPage.filterChannelTypePerformance().click();
 
-    //     await campaignsPage.campaignsItem().first().click();
+            await campaignsPage.selectFilters({ app: TestData.apps.yandexTaxi, channelName: TestData.channelNames.meta });
 
-    //     await expect(campaignPage.campaignDate()).toBeVisible();
+            if (await ContentListUtils.shouldSkipTestIfNoCampaigns(campaignsPage)) {
+                test.skip(true, 'Нет кампаний для проверки');
+            }
 
-    // });
+            await campaignsPage.campaignsItem().first().click();
 
-    test(`Фильтр по продукту «${TestData.apps.go}» | «${TestData.campaignChannelTypes.performance}»`, { tag: ['@regression'] }, async ({ page, campaignPage }) => {
-        await expect(campaignsPage.filterChannelTypePerformance()).toBeVisible();
-        await campaignsPage.filterChannelTypePerformance().click();
+            await expect(campaignPage.campaignApp()).toBeVisible();
+            await expect(campaignPage.campaignApp()).toHaveText(TestData.apps.yandexTaxi);
+            await expect(campaignPage.campaignChannelName()).toHaveText(TestData.channelNames.meta);
+            await expect(campaignPage.campaignChannelType()).toHaveText(TestData.campaignChannelTypes.performance);
+        });
 
-        await expect(campaignsPage.openFiltersButton()).toBeVisible();
-        await campaignsPage.openFiltersIfClosed();
+    test('Сброс дополнительных фильтров',
+        { tag: ['@smoke', '@regression'] },
+        async ({ campaignsPage }) => {
+            await expect(campaignsPage.campaignsItem().first()).toBeVisible();
+            await campaignsPage.selectFilters({ app: TestData.apps.yandexWeather, region: TestData.regions.kyrgyzstan });
+            await expect(campaignsPage.filterApp()).toHaveValue(TestData.apps.yandexWeather);
+            await expect(campaignsPage.filterRegion()).toHaveValue(TestData.regions.kyrgyzstan);
 
-        await campaignsPage.filterApp().selectOption(TestData.apps.go);
-        await expect(campaignsPage.filterApp()).toHaveValue(TestData.apps.go);
+            await campaignsPage.filterResetButton().click();
+            await expect(campaignsPage.filterApp()).toHaveValue('');
+            await expect(campaignsPage.filterRegion()).toHaveValue('');
+        });
 
-        if (await campaignsPage.shouldSkipTestIfNoCampaigns()) {
-            test.skip(true, 'Нет кампаний для проверки');
-        }
+    test(`Выбор более 6 метрик для сортировки`,
+        { tag: ['@smoke', '@regression'] },
+        async ({ campaignsPage }) => {
+            await expect(campaignsPage.campaignsItem().first()).toBeVisible();
+            await campaignsPage.filterChannelTypePerformance().click();
+            await expect(campaignsPage.metricsSortButton()).toBeVisible();
 
-        await campaignsPage.campaignsItem().first().click();
+            await SortingUtils.setupMetricForSorting(campaignsPage, Metrics.CPC);
+            await SortingUtils.setupMetricForSorting(campaignsPage, Metrics.CPM);
+            await campaignsPage.metricsSortButton().click();
 
-        await expect(campaignPage.campaignApp()).toBeVisible();
-        await expect(campaignPage.campaignApp()).toHaveValue(TestData.apps.go);
-        await expect(campaignPage.campaignChannelType()).toHaveValue(TestData.campaignChannelTypes.performance);
-    });
+            await expect(campaignsPage.metricsApplyButton()).toBeVisible();
+            await expect(campaignsPage.selectPresetMetric(Metrics.IMPRESSIONS)).toBeDisabled();
+        });
 
-    test(`Применение сложных фильтров продукт «${TestData.apps.eda}» | площадка «${TestData.channelNames.meta}» | «${TestData.campaignChannelTypes.media}»`, { tag: ['@regression'] }, async ({ page, campaignPage }) => {
-        await expect(campaignsPage.filterChannelTypeMedia()).toBeVisible();
-        await campaignsPage.filterChannelTypeMedia().click();
+    test(`Сортировка кампаний по охватам (Reach) по убыванию | «${TestData.campaignChannelTypes.media}»`,
+        { tag: ['@smoke', '@regression'] },
+        async ({ campaignsPage }) => {
+            await expect(campaignsPage.campaignsItem().first()).toBeVisible();
+            await campaignsPage.filterChannelTypeMedia().click();
+            await expect(campaignsPage.metricsSortButton()).toBeVisible();
 
-        await expect(campaignsPage.openFiltersButton()).toBeVisible();
-        await campaignsPage.openFiltersIfClosed();
+            await SortingUtils.setupMetricForSorting(campaignsPage, Metrics.REACH);
+            await SortingUtils.checkSortingOrder(campaignsPage, Metrics.REACH, false);
+        });
 
-        await campaignsPage.filterApp().selectOption(TestData.apps.eda);
-        await campaignsPage.filterChannelName().selectOption(TestData.channelNames.meta);
+    test(`Сортировка кампаний по расходам (Cost) по возрастанию | «${TestData.campaignChannelTypes.performance}»`,
+        { tag: ['@regression'] },
+        async ({ campaignsPage }) => {
+            await expect(campaignsPage.campaignsItem().first()).toBeVisible();
+            await campaignsPage.filterChannelTypePerformance().click();
+            await expect(campaignsPage.metricsSortButton()).toBeVisible();
 
-        if (await campaignsPage.shouldSkipTestIfNoCampaigns()) {
-            test.skip(true, 'Нет кампаний для проверки');
-        }
+            await SortingUtils.setupMetricForSorting(campaignsPage, Metrics.COST);
+            await SortingUtils.checkSortingOrder(campaignsPage, Metrics.COST, true);
+        });
 
-        await campaignsPage.campaignsItem().first().click();
+    test(`Сортировка кампаний по CTR по убыванию | «${TestData.campaignChannelTypes.performance}»`,
+        { tag: ['@smoke', '@regression'] },
+        async ({ campaignsPage }) => {
+            await expect(campaignsPage.campaignsItem().first()).toBeVisible();
+            await campaignsPage.filterChannelTypePerformance().click();
+            await expect(campaignsPage.metricsSortButton()).toBeVisible();
 
-        await expect(campaignPage.campaignApp()).toBeVisible();
-        await expect(campaignPage.campaignApp()).toHaveValue(TestData.apps.eda);
-        await expect(campaignPage.campaignChannelName()).toHaveValue(TestData.channelNames.meta);
-        await expect(campaignPage.campaignChannelType()).toHaveValue(TestData.campaignChannelTypes.media);
-    });
+            await SortingUtils.setupMetricForSorting(campaignsPage, Metrics.CTR);
+            await SortingUtils.checkSortingOrder(campaignsPage, Metrics.CTR, false);
+        });
 
-    test('Сортировка кампаний по охватам (Reach) по убыванию', { tag: ['@regression'] }, async ({ page }) => {
-        await expect(campaignsPage.metricsSortButton()).toBeVisible();
-        await campaignsPage.setupMetricForSorting(Metrics.REACH);
-        await campaignsPage.checkSortingOrder(Metrics.REACH, false);
-    });
+    test(`Сортировка кампаний по CPM по убыванию | «${TestData.campaignChannelTypes.performance}»`,
+        { tag: ['@regression'] },
+        async ({ campaignsPage }) => {
+            await expect(campaignsPage.campaignsItem().first()).toBeVisible();
+            await campaignsPage.filterChannelTypePerformance().click();
+            await expect(campaignsPage.metricsSortButton()).toBeVisible();
 
-    test('Сортировка кампаний по расходам (Cost) по возрастанию', { tag: ['@regression'] }, async ({ page }) => {
-        await expect(campaignsPage.metricsSortButton()).toBeVisible();
-        await campaignsPage.setupMetricForSorting(Metrics.COST);
-        await campaignsPage.checkSortingOrder(Metrics.COST, true);
-    });
-
-    test('Сортировка кампаний по CTR по убыванию', { tag: ['@regression'] }, async ({ page }) => {
-        await expect(campaignsPage.metricsSortButton()).toBeVisible();
-        await campaignsPage.setupMetricForSorting(Metrics.CTR);
-        await campaignsPage.checkSortingOrder(Metrics.CTR, false);
-    });
-
-    test('Сортировка кампаний по CPM по убыванию', { tag: ['@regression'] }, async ({ page }) => {
-        await expect(campaignsPage.metricsSortButton()).toBeVisible();
-        await campaignsPage.setupMetricForSorting(Metrics.CPM);
-        await campaignsPage.checkSortingOrder(Metrics.CPM, false);
-    });
+            await SortingUtils.setupMetricForSorting(campaignsPage, Metrics.CPM);
+            await SortingUtils.checkSortingOrder(campaignsPage, Metrics.CPM, false);
+        });
 });

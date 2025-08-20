@@ -1,5 +1,5 @@
 import { Page, Locator } from '@playwright/test';
-import { TestIds } from '../data/test-ids';
+import { TestIds } from '@data/test-ids';
 
 export class BasePage {
     readonly page: Page;
@@ -31,5 +31,4 @@ export class BasePage {
     nothingFoundText(): Locator {
         return this.page.getByTestId(TestIds.nothingFoundText);
     }
-
 } 

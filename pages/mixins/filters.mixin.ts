@@ -1,18 +1,18 @@
-import { Locator } from '@playwright/test';
-import { TestIds } from '../../data/test-ids';
+import { expect, Locator, Page } from '@playwright/test';
+import { TestIds } from '@data/test-ids';
+import { ValueMappings } from '@data/value-mappings';
 
 export interface FilterOptions {
     search?: string;
-    channelType?: string;
-    favorite?: boolean;
     app?: string;
     channelName?: string;
     region?: string;
-    date?: string;
+    creativeFormat?: string;
+    creativeLanguage?: string;
 }
 
 export class FiltersMixin {
-    constructor(protected page: any) { }
+    constructor(protected page: Page) { }
 
     searchInput(): Locator {
         return this.page.getByTestId(TestIds.filterSearchInput);
@@ -20,24 +20,6 @@ export class FiltersMixin {
 
     openFiltersButton(): Locator {
         return this.page.getByTestId(TestIds.filterOpenButton);
-    }
-
-    async openFiltersIfClosed(): Promise<void> {
-        const filtersButton = this.openFiltersButton();
-
-        const ariaExpanded = await filtersButton.getAttribute('aria-expanded');
-        const dataExpanded = await filtersButton.getAttribute('data-expanded');
-        const classAttr = await filtersButton.getAttribute('class');
-
-        const isActive = ariaExpanded === 'true' ||
-            dataExpanded === 'true' ||
-            (classAttr && classAttr.includes('active')) ||
-            (classAttr && classAttr.includes('expanded'));
-
-        if (!isActive) {
-            await filtersButton.click();
-            await this.page.waitForTimeout(300);
-        }
     }
 
     filterChannelType(): Locator {
@@ -68,60 +50,89 @@ export class FiltersMixin {
         return this.page.getByTestId(TestIds.filterRegion);
     }
 
-    dateFilter(): Locator {
-        return this.page.getByTestId(TestIds.filterDate);
+    dateFromFilter(): Locator {
+        return this.page.getByTestId(TestIds.filterDateFrom);
     }
 
-    datePicker(): Locator {
-        return this.page.getByTestId(TestIds.filterDatePicker);
+    dateToFilter(): Locator {
+        return this.page.getByTestId(TestIds.filterDateTo);
+    }
+
+    filterResetButton(): Locator {
+        return this.page.getByTestId(TestIds.filterResetButton);
+    }
+
+    filterCreativeFormat(): Locator {
+        return this.page.getByTestId(TestIds.filterCreativeFormat);
+    }
+
+    filterCreativeLanguage(): Locator {
+        return this.page.getByTestId(TestIds.filterCreativeLanguage);
+    }
+
+    filterCreativeCampaign(): Locator {
+        return this.page.getByTestId(TestIds.filterCreativeCampaign);
+    }
+
+    async openFiltersIfClosed(): Promise<void> {
+        if (!await this.filterApp().isVisible()) {
+            await this.openFiltersButton().click();
+        }
+
+        await this.page.waitForTimeout(300);
     }
 
     async selectFilters(filters: FilterOptions = {}): Promise<void> {
         const {
             search,
-            channelType,
-            favorite,
             app,
             channelName,
             region,
-            date,
+            creativeFormat,
+            creativeLanguage,
         } = filters;
 
-        if (Object.values(filters).some(value => value)) {
-            await this.openFiltersIfClosed();
-        }
+        await this.openFiltersIfClosed();
 
         if (search) {
             await this.searchInput().fill('');
             await this.searchInput().fill(search);
         }
 
-        if (channelType) {
-            await this.filterChannelType().selectOption(channelType);
-        }
-
-        if (favorite) {
-            const currentState = await this.filterShowFavorites().isChecked();
-            if (currentState !== favorite) {
-                await this.filterShowFavorites().click();
-            }
-        }
-
         if (app) {
-            await this.filterApp().selectOption(app);
+            await this.selectOptionInCustomSelect(this.filterApp(), app, ValueMappings.apps);
         }
 
         if (channelName) {
-            await this.filterChannelName().selectOption(channelName);
+            await this.selectOptionInCustomSelect(this.filterChannelName(), channelName, ValueMappings.channels);
         }
 
         if (region) {
-            await this.filterRegion().selectOption(region);
+            await this.selectOptionInCustomSelect(this.filterRegion(), region, ValueMappings.regions);
         }
 
-        if (date) {
-            await this.dateFilter().selectOption(date);
+        if (creativeFormat) {
+            await this.selectOptionInCustomSelect(this.filterCreativeFormat(), creativeFormat, ValueMappings.creativeFormats);
         }
 
+        if (creativeLanguage) {
+            await this.selectOptionInCustomSelect(this.filterCreativeLanguage(), creativeLanguage, ValueMappings.languages);
+        }
+    }
+
+    protected async selectOptionInCustomSelect(selectLocator: Locator, displayName: string, valueMapping: Record<string, string>): Promise<void> {
+        const optionValue = valueMapping[displayName];
+        const currentValue = await selectLocator.getAttribute('value');
+
+        if (currentValue === displayName) {
+            return;
+        }
+
+        await selectLocator.click();
+
+        await expect(selectLocator).toBeVisible();
+
+        const option = this.page.locator(`[role="option"][value="${optionValue}"]`);
+        await option.click();
     }
 }

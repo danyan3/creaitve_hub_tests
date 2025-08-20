@@ -17,13 +17,19 @@
                 "config/*"
             ],
             "@fixtures/*": [
-                "tests/e2e/fixtures/*"
+                "fixtures/*"
             ],
             "@pages/*": [
                 "pages/*"
             ],
             "@data/*": [
                 "data/*"
+            ],
+            "@metrics/*": [
+                "data/metrics/*"
+            ],
+            "@paths/*": [
+                "data/paths/*"
             ],
             "@tests/*": [
                 "tests/*"
@@ -35,13 +41,16 @@
                 "tests/screenshot/*"
             ],
             "@utils/*": [
-                "tests/screenshot/utils/*"
+                "utils/*"
             ],
             "@scripts/*": [
                 "scripts/*"
             ],
             "@storage/*": [
                 "storage-states/*"
+            ],
+            "@mixins/*": [
+                "pages/mixins/*"
             ]
         }
     },
