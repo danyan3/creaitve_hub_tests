@@ -4,7 +4,7 @@ import { Download } from '@playwright/test';
 import * as fs from 'fs';
 
 test.describe('Страница отчета', () => {
-    test.beforeEach(async ({ page, reportPage, reportsPage }) => {
+    test.beforeEach(async ({ page, reportsPage }) => {
         await page.goto(Paths.reports);
 
         try {
@@ -76,7 +76,11 @@ test.describe('Страница отчета', () => {
                             fs.unlinkSync(downloadPath);
                         }
                     } catch (error) {
-                        console.warn(`Не удалось удалить файл ${downloadPath}:`, error);
+                        // Логируем ошибку удаления файла, но не прерываем тест
+                        test.info().annotations.push({
+                            type: 'warning',
+                            description: `Не удалось удалить файл ${downloadPath}: ${error}`
+                        });
                     }
                 });
             });

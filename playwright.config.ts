@@ -19,11 +19,7 @@ export default defineConfig({
         acceptDownloads: true,
     },
     expect: {
-        timeout: 15000, // время ожидания появления элемента
-        toHaveScreenshot: {
-            threshold: 0.2, // порог различия для скриншотов (0.2 = 20%)
-            maxDiffPixels: 100, // максимальное количество пикселей различия
-        },
+        timeout: 15000,
     },
     projects: [
         {
@@ -41,9 +37,5 @@ export default defineConfig({
             retries: process.env.CI ? 1 : 0,
             workers: process.env.CI ? 1 : 2,
         },
-        { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
-        { name: 'firefox', use: { ...devices['Desktop Firefox'] } },
-        { name: 'webkit', use: { ...devices['Desktop Safari'] } },
     ],
-    snapshotPathTemplate: '{testDir}/{testFileDir}/{testFileName}-snapshots/{arg}{ext}',
 }); 

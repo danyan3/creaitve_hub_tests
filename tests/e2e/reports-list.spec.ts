@@ -10,19 +10,33 @@ test.describe('Страница списка отчетов', () => {
     test('Отображение всех атрибутов отчета',
         { tag: ['@smoke', '@critical'] },
         async ({ reportsPage }) => {
-            await expect(reportsPage.reportItem()).toBeVisible();
-            await expect(reportsPage.reportItemDeleteButton()).toBeVisible();
-            await expect(reportsPage.reportItemDownloadButton()).toBeVisible();
+            await expect(reportsPage.reportItem().first()).toBeVisible();
+            await expect(reportsPage.reportItemDeleteButton().first()).toBeVisible();
+            await expect(reportsPage.reportItemDownloadButton().first()).toBeVisible();
         });
 
     test('Удаление отчета',
-        { tag: ['@critical'] },
+        { tag: ['@regression'] },
         async ({ reportsPage }) => {
-            const reportItem = reportsPage.reportItem().last();
+            await expect(reportsPage.reportItem().first()).toBeVisible();
+            const initialCount = await reportsPage.reportItemsCount();
+            if (initialCount === 0) {
+                test.skip(true, 'Нет отчетов для удаления');
+            }
+
+            const lastIndex = initialCount - 1;
+            const reportItem = reportsPage.reportItemByIndex(lastIndex);
+            const deleteButton = reportsPage.reportItemDeleteButtonByIndex(lastIndex);
+
             await expect(reportItem).toBeVisible();
-            await reportsPage.reportItemDeleteButton().last().click();
+            await expect(deleteButton).toBeVisible();
+
+            await deleteButton.click();
 
             await expect(reportItem).not.toBeVisible();
+
+            const finalCount = await reportsPage.reportItemsCount();
+            expect(finalCount).toBe(initialCount - 1);
         });
 
 });

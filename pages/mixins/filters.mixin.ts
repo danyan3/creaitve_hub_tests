@@ -134,5 +134,7 @@ export class FiltersMixin {
 
         const option = this.page.locator(`[role="option"][value="${optionValue}"]`);
         await option.click();
+
+        await this.page.waitForTimeout(500);
     }
 }

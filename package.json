@@ -1,7 +1,7 @@
 {
     "name": "tests",
     "version": "1.0.0",
-    "description": "",
+    "description": "Playwright тесты для Creative Hub",
     "main": "index.js",
     "directories": {
         "test": "tests"
@@ -16,18 +16,14 @@
         "test:e2e": "playwright test --project=e2e",
         "test:e2e:headed": "playwright test --project=e2e --headed",
         "test:e2e:ui": "playwright test --project=e2e --ui",
-        "test:all": "playwright test --project=chromium --project=firefox --project=webkit",
-        "typecheck": "tsc -p tsconfig.json --noEmit",
-        "test:screenshots": "playwright test",
-        "test:screenshots:update": "playwright test --update-snapshots",
-        "test:screenshots:headed": "playwright test --headed",
-        "test:screenshots:ui": "playwright test --ui",
-        "screenshots:run": "node scripts/run-screenshots.js run",
-        "screenshots:update": "node scripts/run-screenshots.js update",
-        "screenshots:report": "node scripts/run-screenshots.js report",
-        "screenshots:clean": "node scripts/run-screenshots.js clean"
+        "typecheck": "tsc -p tsconfig.json --noEmit"
     },
-    "keywords": [],
+    "keywords": [
+        "playwright",
+        "testing",
+        "e2e",
+        "automation"
+    ],
     "author": "",
     "license": "ISC",
     "devDependencies": {

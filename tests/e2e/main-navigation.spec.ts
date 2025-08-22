@@ -39,11 +39,11 @@ test.describe('Основная навигация', () => {
             await expect(reportsPage.reportsTab()).toBeVisible();
             await reportsPage.reportsTab().click();
 
-            await expect(reportsPage.reportItem()).toBeVisible();
+            await expect(reportsPage.reportItem().first()).toBeVisible();
         });
 
     test('Сохранение состояния навигации между вкладками',
-        { tag: ['@regression'] },
+        { tag: ['@smoke', '@regression'] },
         async ({ campaignsPage, creativesPage }) => {
             await expect(campaignsPage.campaignsTab()).toBeVisible();
             await campaignsPage.campaignsTab().click();

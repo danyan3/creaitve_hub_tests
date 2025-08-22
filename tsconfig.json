@@ -13,9 +13,6 @@
         ],
         "baseUrl": ".",
         "paths": {
-            "@config/*": [
-                "config/*"
-            ],
             "@fixtures/*": [
                 "fixtures/*"
             ],
@@ -37,14 +34,8 @@
             "@e2e/*": [
                 "tests/e2e/*"
             ],
-            "@screenshot/*": [
-                "tests/screenshot/*"
-            ],
             "@utils/*": [
                 "utils/*"
-            ],
-            "@scripts/*": [
-                "scripts/*"
             ],
             "@storage/*": [
                 "storage-states/*"

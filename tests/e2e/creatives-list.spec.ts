@@ -11,7 +11,7 @@ test.describe('Страница списка креативов', () => {
     });
 
     test(`Фильтр по продукту «${TestData.apps.kinopoisk}» | «${TestData.campaignChannelTypes.media}»`,
-        { tag: ['@regression'] },
+        { tag: ['@smoke', '@regression'] },
         async ({ creativesPage, creativePage }) => {
             await expect(creativesPage.creativesItem().first()).toBeVisible();
             await creativesPage.filterChannelTypeMedia().click();
@@ -31,7 +31,7 @@ test.describe('Страница списка креативов', () => {
         });
 
     test(`Фильтр по платформе ${TestData.channelNames.meta} | «${TestData.campaignChannelTypes.media}»`,
-        { tag: ['@regression'] },
+        { tag: ['@smoke', '@regression'] },
         async ({ creativesPage, creativePage }) => {
             await expect(creativesPage.creativesItem().first()).toBeVisible();
             await creativesPage.filterChannelTypeMedia().click();
@@ -69,7 +69,7 @@ test.describe('Страница списка креативов', () => {
         });
 
     test(`Мультифильтр по продукту «${TestData.apps.yandexPay}» | «${TestData.campaignChannelTypes.performance}»`,
-        { tag: ['@regression'] },
+        { tag: ['@smoke', '@regression'] },
         async ({ creativesPage, creativePage }) => {
             await expect(creativesPage.creativesItem().first()).toBeVisible();
             await creativesPage.filterChannelTypePerformance().click();
@@ -134,7 +134,7 @@ test.describe('Страница списка креативов', () => {
             await expect(reportPage.selectMetric(Metrics.REACH)).not.toBeVisible();
         });
 
-    test(`Отчет с кастомными метриками | ${TestData.campaignChannelTypes.performance}: ${Metrics.ROAS}, ${Metrics.REVENUE}, ${Metrics.LTV}, ${Metrics.IMPRESSIONS}`,
+    test(`Отчет с кастомными метриками | ${TestData.campaignChannelTypes.performance}: ${Metrics.CLICKS}, ${Metrics.CTR}, ${Metrics.CONVERSIONS}, ${Metrics.IMPRESSIONS}`,
         { tag: ['@regression'] },
         async ({ creativesPage, reportPage }) => {
             await expect(creativesPage.creativesItem().first()).toBeVisible();
@@ -148,21 +148,22 @@ test.describe('Страница списка креативов', () => {
 
             await expect(creativesPage.goToReportButton()).toBeVisible();
 
-            await MetricsUtils.selectReportMetrics(creativesPage, [Metrics.ROAS, Metrics.REVENUE, Metrics.LTV, Metrics.IMPRESSIONS]);
+            await MetricsUtils.selectReportMetrics(creativesPage, [Metrics.CLICKS, Metrics.CTR, Metrics.CONVERSIONS, Metrics.IMPRESSIONS]);
             await creativesPage.goToReportButton().click();
-
-            await expect(reportPage.selectMetric(Metrics.ROAS)).toBeVisible();
-            await expect(reportPage.selectMetric(Metrics.REVENUE)).toBeVisible();
-            await expect(reportPage.selectMetric(Metrics.LTV)).toBeVisible();
+            await expect(reportPage.selectMetric(Metrics.CLICKS)).toBeVisible();
             await expect(reportPage.selectMetric(Metrics.IMPRESSIONS)).toBeVisible();
+            await expect(reportPage.selectMetric(Metrics.CTR)).toBeVisible();
+            await expect(reportPage.selectMetric(Metrics.CONVERSIONS)).toBeVisible();
 
+            await expect(reportPage.selectMetric(Metrics.ROAS)).not.toBeVisible();
             await expect(reportPage.selectMetric(Metrics.CPC)).not.toBeVisible();
             await expect(reportPage.selectMetric(Metrics.VTR)).not.toBeVisible();
             await expect(reportPage.selectMetric(Metrics.FREQUENCY)).not.toBeVisible();
+
         });
 
     test(`Отчет из нескольких креативов | ${TestData.campaignChannelTypes.media}: ${Metrics.IMPRESSIONS}, ${Metrics.CTR}, ${Metrics.REACH}`,
-        { tag: ['@regression'] },
+        { tag: ['@smoke', '@regression'] },
         async ({ creativesPage, reportPage }) => {
             await expect(creativesPage.creativesItem().first()).toBeVisible();
             await creativesPage.filterChannelTypeMedia().click();

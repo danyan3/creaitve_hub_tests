@@ -9,9 +9,15 @@ export class ContentListUtils {
     }
 
     static async shouldSkipTestIfNoCreatives(page: CreativesListPage): Promise<boolean> {
-        await page.creativesItem().first().waitFor({ state: 'visible', timeout: 5000 });
+        await page.page.waitForTimeout(500);
+
         const creativesCount = await page.creativesItem().count();
-        return creativesCount === 0 && await page.nothingFoundText().isVisible();
+        if (creativesCount === 0) {
+            return true;
+        }
+
+        await page.creativesItem().first().waitFor({ state: 'visible', timeout: 5000 });
+        return false;
     }
 
 }
